@@ -49,8 +49,11 @@ jobs:
           enablement: true
       
       - name: Build for QA
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
-          npm run build -- --mode qa --base /blocomanagersite/
+          npm run build -- --mode qa
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -58,18 +61,33 @@ jobs:
           path: ./dist
 
   # Deployment job for QA
-  deploy:
+  deploy-to-qa-repo:
     environment:
       name: qa-environment
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: https://gerryatsxf.github.io/blocomanagersite-qa/${{ github.head_ref || github.ref_name }}
     runs-on: ubuntu-latest
-    container:
-      image: debian:bullseye-slim
     needs: build
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: github-pages
+          path: ./qa-build
+      
+      - name: Extract build files
+        run: |
+          cd qa-build
+          tar -xf artifact.tar
+          ls -la
+      
+      - name: Deploy to QA Repository
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.GITHUB_TOKEN }}
+          external_repository: gerryatsxf/blocomanagersite-qa
+          publish_dir: ./qa-build
+          destination_dir: ${{ github.head_ref || github.ref_name }}
+          publish_branch: main
       
       - name: Comment PR with QA URL
         if: github.event_name == 'pull_request'
@@ -77,7 +95,6 @@ jobs:
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
-            const qaUrl = '${{ steps.deployment.outputs.page_url }}';
             
             // Find existing comment
             const comments = await github.rest.issues.listComments({
@@ -90,6 +107,9 @@ jobs:
               comment.user.type === 'Bot' && 
               comment.body.includes('🚀 QA Environment Deployed')
             );
+            
+            const branchName = context.payload.pull_request.head.ref;
+            const qaUrl = `https://gerryatsxf.github.io/blocomanagersite-qa/${branchName}`;
             
             const body = `🚀 **QA Environment Deployed Successfully!**
             
