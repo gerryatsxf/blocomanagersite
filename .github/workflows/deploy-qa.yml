@@ -74,6 +74,7 @@ jobs:
         uses: actions/deploy-pages@v4
       
       - name: Comment PR with QA URL
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
@@ -118,3 +119,10 @@ jobs:
                 body: body
               });
             }
+      
+      - name: Output QA URL for direct pushes
+        if: github.event_name == 'push'
+        run: |
+          echo "🚀 QA Environment Deployed Successfully!"
+          echo "Preview URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "Built from commit: ${{ github.sha }}"
