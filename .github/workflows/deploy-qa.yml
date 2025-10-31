@@ -42,12 +42,15 @@ jobs:
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        with:
+          # Token to use for Pages setup
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable Pages if not already enabled
+          enablement: true
       
       - name: Build for QA
         run: |
-          npm run build
-        env:
-          NODE_ENV: qa
+          npm run build -- --mode qa
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

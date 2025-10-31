@@ -40,12 +40,15 @@ jobs:
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        with:
+          # Token to use for Pages setup
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable Pages if not already enabled
+          enablement: true
       
       - name: Build for Production
         run: |
-          npm run build
-        env:
-          NODE_ENV: production
+          npm run build -- --mode production
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
