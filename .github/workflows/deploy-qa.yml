@@ -5,6 +5,8 @@ on:
   pull_request:
     branches: [ main ]
     types: [ opened, synchronize, reopened ]
+  push:
+    branches: [ qa-env ]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -50,7 +52,7 @@ jobs:
       
       - name: Build for QA
         run: |
-          npm run build -- --mode qa
+          npm run build -- --mode qa --base /blocomanagersite/
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -60,7 +62,7 @@ jobs:
   # Deployment job for QA
   deploy:
     environment:
-      name: qa
+      name: github-pages-qa
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     container:

@@ -48,7 +48,7 @@ jobs:
       
       - name: Build for Production
         run: |
-          npm run build -- --mode production
+          npm run build -- --mode production --base /blocomanagersite/
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
