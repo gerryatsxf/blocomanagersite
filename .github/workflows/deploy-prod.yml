@@ -4,6 +4,10 @@ name: Deploy Production to GitHub Pages
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'PROCESS_DOCS.md'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -20,6 +24,7 @@ concurrency:
 jobs:
   # Build job
   build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     container:
       image: node:18-bullseye
@@ -40,12 +45,15 @@ jobs:
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        with:
+          # Token to use for Pages setup
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable Pages if not already enabled
+          enablement: true
       
       - name: Build for Production
         run: |
-          npm run build
-        env:
-          NODE_ENV: production
+          npm run build -- --mode production --base /blocomanagersite/
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -55,7 +63,7 @@ jobs:
   # Deployment job for Production
   deploy:
     environment:
-      name: github-pages
+      name: production
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     container:
