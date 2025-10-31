@@ -24,6 +24,7 @@ concurrency:
 jobs:
   # Build job
   build:
+    if: github.ref != 'refs/heads/main' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     container:
       image: node:18-bullseye
@@ -62,7 +63,7 @@ jobs:
   # Deployment job for QA
   deploy:
     environment:
-      name: github-pages-qa
+      name: qa-environment
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     container:

@@ -4,6 +4,10 @@ name: Deploy Production to GitHub Pages
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'PROCESS_DOCS.md'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -20,6 +24,7 @@ concurrency:
 jobs:
   # Build job
   build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     container:
       image: node:18-bullseye
@@ -58,7 +63,7 @@ jobs:
   # Deployment job for Production
   deploy:
     environment:
-      name: github-pages
+      name: production
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     container:
