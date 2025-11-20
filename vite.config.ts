@@ -6,14 +6,12 @@ export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
   const isQA = mode === 'qa'
   
-  // Get branch name from environment variable (set by GitHub Actions)
-  const branchName = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || 'qa-env'
-  
   let basePath = '/'
   if (isProduction) {
     basePath = '/blocomanagersite/'
   } else if (isQA) {
-    basePath = `/blocomanagersite-qa/${branchName}/`
+    // Netlify uses root path - no subdirectories needed
+    basePath = '/'
   }
   
   return {
@@ -22,7 +20,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
-      // Ensure proper asset handling for GitHub Pages
+      // Ensure proper asset handling
       rollupOptions: {
         output: {
           manualChunks: undefined,

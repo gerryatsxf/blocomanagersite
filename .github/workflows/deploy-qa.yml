@@ -49,9 +49,6 @@ jobs:
           enablement: true
       
       - name: Build for QA
-        env:
-          GITHUB_HEAD_REF: ${{ github.head_ref }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
           npm run build -- --mode qa
       
@@ -60,11 +57,11 @@ jobs:
         with:
           path: ./dist
 
-  # Deployment job for QA
-  deploy-to-qa-repo:
+  # Deployment job for QA (Netlify)
+  deploy-to-netlify:
     environment:
       name: qa-environment
-      url: https://gerryatsxf.github.io/blocomanagersite-qa/${{ github.head_ref || github.ref_name }}
+      url: ${{ steps.netlify-deploy.outputs.deploy-url }}
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -83,14 +80,18 @@ jobs:
           tar -xf artifact.tar
           ls -la
       
-      - name: Deploy to QA Repository
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Deploy to Netlify
+        id: netlify-deploy
+        uses: nwtgck/actions-netlify@v3.0
         with:
-          personal_token: ${{ secrets.QA_DEPLOY_TOKEN }}
-          external_repository: gerryatsxf/blocomanagersite-qa
-          publish_dir: ./qa-build
-          destination_dir: ${{ github.head_ref || github.ref_name }}
-          publish_branch: main
+          publish-dir: './qa-build'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "QA Deploy from PR #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}"
+          alias: ${{ github.head_ref || github.ref_name }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
       
       - name: Comment PR with QA URL
         if: github.event_name == 'pull_request'
@@ -112,13 +113,14 @@ jobs:
             );
             
             const branchName = context.payload.pull_request.head.ref;
-            const qaUrl = `https://gerryatsxf.github.io/blocomanagersite-qa/${branchName}`;
+            const qaUrl = `${{ steps.netlify-deploy.outputs.deploy-url }}`;
             
             const body = `🚀 **QA Environment Deployed Successfully!**
             
             Preview your changes at: ${qaUrl}
             
-            This deployment is automatically updated when you push new commits to this PR.
+            **Branch**: ${branchName}
+            **Netlify**: This deployment is automatically updated when you push new commits to this PR.
             
             ---
             *Built from commit: ${context.sha.substring(0, 7)}*`;

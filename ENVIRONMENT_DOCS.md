@@ -12,13 +12,14 @@ This document outlines the three-tier environment strategy for BlocoManager depl
 - **Base Path**: `/` (root)
 
 ### **Quality Assurance (qa)**
-- **Location**: GitHub Pages 
-- **Access**: Via GitHub Actions deployment URL
+- **Location**: Netlify 
+- **Access**: Dynamic URLs per PR (e.g., `https://deploy-preview-1--blocomanager-qa.netlify.app`)
 - **Purpose**: Feature testing and staging before production
 - **Triggers**: 
   - Pull requests to `main` branch (created, updated, or new commits pushed)
-- **Base Path**: `/blocomanagersite/`
+- **Base Path**: `/` (root)
 - **Environment**: `qa-environment`
+- **Branch Aliases**: Each branch gets its own deployment URL
 
 ### **Production (prod)**
 - **Location**: GitHub Pages
