@@ -15,7 +15,7 @@ const HomePage: React.FC = () => {
           <div className="nav-menu">
             <a href="#features" className="nav-link">Features</a>
             <a href="#pricing" className="nav-link">Pricing</a>
-            <a href="#about" className="nav-link">About</a>
+            <Link to="/about" className="nav-link">About</Link>
             <Link to="/support" className="nav-link">Support</Link>
             <Link to="/login" className="btn-outline">Sign In</Link>
             <Link to="/signup" className="btn-primary">Get Started</Link>
@@ -226,7 +226,7 @@ const HomePage: React.FC = () => {
             <div className="footer-section">
               <h4>Company</h4>
               <ul>
-                <li><a href="#about">About Us</a></li>
+                <li><Link to="/about">About Us</Link></li>
                 <li><a href="#careers">Careers</a></li>
                 <li><a href="#blog">Blog</a></li>
                 <li><a href="#press">Press</a></li>
