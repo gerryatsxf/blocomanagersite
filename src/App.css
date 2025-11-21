@@ -1,7 +1,9 @@
 /* Landing Page Styles */
 .landing-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* Container */
@@ -9,6 +11,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
 }
 
 /* Navigation */
@@ -115,12 +118,15 @@
   padding: 120px 0 80px;
   color: white;
   text-align: center;
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .hero-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
 }
 
 .hero-title {
@@ -180,6 +186,7 @@
 /* Sections */
 .features, .pricing, .testimonials, .cta {
   padding: 80px 0;
+  width: 100%;
 }
 
 .features {
@@ -396,6 +403,7 @@
   background: #333;
   color: white;
   padding: 60px 0 20px;
+  width: 100%;
 }
 
 .footer-grid {
